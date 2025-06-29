@@ -82,7 +82,7 @@ const Navbar = () => {
           {!user.isLoggedIn ? (
             <a
               href="/login"
-              className="btn btn-outline btn-sm text-white border-white hover:bg-white hover:text-black text-[16px]"
+              className="btn btn-outline btn-sm text-white border-white hover:bg-[#131313] hover:text-white text-[16px]"
             >
               Login
             </a>
