@@ -17,12 +17,12 @@ const Navbar = () => {
       link: "/events",
     },
     {
-      name: "Add Event",
-      link: "/add-event",
-    },
-    {
       name: "My Event",
       link: "/my-events",
+    },
+    {
+      name: "Add Event",
+      link: "/add-event",
     },
   ];
 
