@@ -51,6 +51,14 @@ export const eventApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["event"],
     }),
+    updateEvent: builder.mutation({
+      query: ({ id, payload }) => ({
+        url: `/event/${id}`,
+        method: "PATCH",
+        body: payload,
+      }),
+      invalidatesTags: ["event"],
+    }),
   }),
 });
 
@@ -59,4 +67,5 @@ export const {
   useGetAllEventQuery,
   useDeleteEventMutation,
   useGetMyEventQuery,
+  useUpdateEventMutation,
 } = eventApi;

@@ -19,6 +19,7 @@ const AddEvent = () => {
   const userInfo = useSelector((state) => state.auth.user);
 
   const [eventTitle, setEventTitle] = useState("");
+  // eslint-disable-next-line no-unused-vars
   const [name, setName] = useState(userInfo?.name);
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
@@ -69,11 +70,11 @@ const AddEvent = () => {
     }
 
     // Reset form
-    // setEventTitle("");
-    // setDate("");
-    // setTime("");
-    // setLocation("");
-    // setDescription("");
+    setEventTitle("");
+    setDate("");
+    setTime("");
+    setLocation("");
+    setDescription("");
   };
 
   return (

@@ -1,12 +1,12 @@
+import { useSelector } from "react-redux";
 import { FiInfo } from "react-icons/fi";
 import EventCard from "../component/my-events/event_card";
-import { useSelector } from "react-redux";
+import Swal from "sweetalert2";
+import { toast, Toaster } from "sonner";
 import {
   useDeleteEventMutation,
   useGetMyEventQuery,
 } from "../redux/features/event/event.api";
-import Swal from "sweetalert2";
-import { toast, Toaster } from "sonner";
 
 const MyEvents = () => {
   const userEmail = useSelector((state) => state?.auth?.user?.email);
@@ -43,10 +43,7 @@ const MyEvents = () => {
       }
     });
   };
-  const handleUpdateClick = (eventId) => {
-    console.log(`Update event with ID: ${eventId}`);
-    console.log(`Navigating to update form for event ID: ${eventId}`);
-  };
+ 
 
   return (
     <div className="min-h-screen bg-gray-100 px-4 sm:px-6 lg:px-8 pb-20">
@@ -77,7 +74,7 @@ const MyEvents = () => {
                 key={event?._id}
                 event={event}
                 handleDeleteClick={handleDeleteClick}
-                handleUpdateClick={handleUpdateClick}
+             
               />
             ))}
           </div>
