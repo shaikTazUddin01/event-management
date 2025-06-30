@@ -1,23 +1,27 @@
 import { useState } from "react";
 import { FaImage } from "react-icons/fa6";
 import { FiUser, FiMail, FiLock, FiArrowLeft } from "react-icons/fi";
+import { useUserRegistrationMutation } from "../redux/features/auth/user.api";
+import { toast, Toaster } from "sonner";
 
 const inputBase =
   "block w-full pl-10 pr-3 py-3 border placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm";
 const iconStyle = "h-5 w-5 text-gray-400";
 
 const Registration = () => {
-  const [username, setUsername] = useState("");
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [error, setError] = useState("");
 
-  const handleSubmit = (e) => {
+  const [userRegistration] = useUserRegistrationMutation();
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
 
-    if (!username || !email || !password || !imageUrl) {
+    if (!name || !email || !password || !imageUrl) {
       setError("Please fill in all fields.");
       return;
     }
@@ -27,28 +31,28 @@ const Registration = () => {
       return;
     }
 
-    console.log("Registration attempt:", {
-      username,
-      email,
-      password,
-      imageUrl,
-    });
+    const userData = { name, email, password, imageUrl };
+    const toastId = toast.loading("Registration On Processing...");
+
+    try {
+      const response = await userRegistration(userData);
+
+      if (response.error) {
+        toast.error(response.error.data || "Registration failed", {
+          id: toastId,
+        });
+        return;
+      }
+
+      toast.success("Registration Successful", { id: toastId, duration: 500 });
+    } catch (err) {
+      toast.error(err, { id: toastId });
+    }
   };
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center py-12 px-4">
       <div className="max-w-md w-full bg-white p-8 md:p-10 rounded-2xl shadow-2xl space-y-8 animate-fade-in-down">
-        {/* Back Button */}
-        <a href="/">
-          <button
-            type="button"
-            className="flex items-center text-blue-600 hover:text-blue-800 font-medium cursor-pointer"
-          >
-            <FiArrowLeft className="mr-2 h-5 w-5" />
-            Home
-          </button>
-        </a>
-
         <div className="text-center">
           <div className="mx-auto h-12 w-12 flex items-center justify-center bg-blue-100 text-blue-600 rounded-full mb-4">
             <FiUser className="h-7 w-7" />
@@ -74,12 +78,12 @@ const Registration = () => {
                 <FiUser className={iconStyle} />
               </div>
               <input
-                id="username"
-                name="username"
+                id="name"
+                name="name"
                 type="text"
-                placeholder="Username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                placeholder="Name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
                 className={`${inputBase} border-gray-300`}
                 required
               />
@@ -100,6 +104,7 @@ const Registration = () => {
                 required
               />
             </div>
+
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <FaImage className={iconStyle} />
@@ -107,8 +112,8 @@ const Registration = () => {
               <input
                 id="imageUrl"
                 name="imageUrl"
-                type="imageUrl"
-                placeholder="Image Url"
+                type="text"
+                placeholder="Image URL"
                 value={imageUrl}
                 onChange={(e) => setImageUrl(e.target.value)}
                 className={`${inputBase} border-gray-300`}
@@ -132,12 +137,14 @@ const Registration = () => {
               />
             </div>
           </div>
+
           {error && (
             <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
               <strong className="font-bold">Error!</strong>
               <span className="ml-2">{error}</span>
             </div>
           )}
+
           <button
             type="submit"
             className="w-full py-3 px-4 bg-blue-600 text-white text-lg font-semibold hover:bg-blue-700 cursor-pointer rounded-xl"
@@ -146,6 +153,7 @@ const Registration = () => {
           </button>
         </form>
       </div>
+      <Toaster />
     </div>
   );
 };
