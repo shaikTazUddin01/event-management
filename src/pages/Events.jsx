@@ -1,52 +1,15 @@
 import { useState } from "react";
 import { FiSearch, FiSliders, FiInfo } from "react-icons/fi";
 import EventCard from "../component/events/event_card";
+import { useGetAllEventQuery } from "../redux/features/event/event.api";
 
 const Events = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterOption, setFilterOption] = useState("");
-  const [events, setEvents] = useState([
-    {
-      id: "event-5",
-      eventTitle: "Global AI Conference 2025",
-      name: "AI Innovators Inc.",
-      dateTime: "2025-09-01T09:00",
-      location: "Virtual Event",
-      description:
-        "A global conference exploring the latest advancements in Artificial Intelligence, machine learning, and deep learning. Featuring industry leaders and research presentations.",
-      attendeeCount: 1200,
-    },
-    {
-      id: "event-6",
-      eventTitle: "Startup Pitch Competition",
-      name: "Venture Capital Group",
-      dateTime: "2025-09-10T15:00",
-      location: "Innovation Hub, Tech City",
-      description:
-        "Watch promising startups present their innovative ideas to a panel of investors. Networking opportunities available.",
-      attendeeCount: 250,
-    },
-    {
-      id: "event-7",
-      eventTitle: "Sustainable Living Workshop",
-      name: "Green Earth Foundation",
-      dateTime: "2025-09-22T10:00",
-      location: "Community Garden, Eco Village",
-      description:
-        "Hands-on workshop focusing on sustainable practices, including composting, urban farming, and renewable energy.",
-      attendeeCount: 75,
-    },
-    {
-      id: "event-8",
-      eventTitle: "Local Food Festival",
-      name: "Culinary Delights",
-      dateTime: "2025-10-05T12:00",
-      location: "Central Plaza",
-      description:
-        "A celebration of local cuisine, featuring food trucks, restaurant stalls, cooking demonstrations, and live entertainment.",
-      attendeeCount: 500,
-    },
-  ]);
+  const { data, isLoading } = useGetAllEventQuery();
+  const events = data?.result;
+
+  console.log(events);
 
   const handleClearFilters = () => {
     setSearchTerm("");
@@ -122,7 +85,9 @@ const Events = () => {
           )}
         </div>
 
-        {events.length === 0 ? (
+        {isLoading ? (
+          <p className="text-lg">Loading...</p>
+        ) : events?.length === 0 ? (
           <div className="text-center py-10 text-gray-600">
             <FiInfo className="mx-auto h-12 w-12 text-gray-400 mb-4" />
             <p className="text-xl font-semibold">
@@ -132,7 +97,7 @@ const Events = () => {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {events.map((event) => (
+            {events?.map((event) => (
               <EventCard event={event} />
             ))}
           </div>

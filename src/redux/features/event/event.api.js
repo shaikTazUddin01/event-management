@@ -10,7 +10,8 @@ export const eventApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["event"],
     }),
-    getEvent: builder.query({
+
+    getAllEvent: builder.query({
       query: () => ({
         url: "/event/getAll",
         method: "GET",
@@ -19,4 +20,4 @@ export const eventApi = baseApi.injectEndpoints({
   }),
 });
 
-export const { useAddEventMutation, useGetEventQuery } = eventApi;
+export const { useAddEventMutation, useGetAllEventQuery } = eventApi;

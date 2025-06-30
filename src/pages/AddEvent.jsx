@@ -37,11 +37,11 @@ const AddEvent = () => {
       return;
     }
 
-    const eventDateTime = `${date}T${time}`;
     const newEvent = {
       eventTitle,
       name,
-      dateTime: eventDateTime,
+      date,
+      time,
       location,
       description,
       attendeeCount: 0,

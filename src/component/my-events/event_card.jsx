@@ -7,7 +7,6 @@ import {
   FiEdit,
   FiTrash2,
 } from "react-icons/fi";
-import { formatDate, formatTime } from "../../utils/formatData&time";
 
 const EventCard = ({ event, handleUpdateClick, handleDeleteClick }) => {
   return (
@@ -23,10 +22,10 @@ const EventCard = ({ event, handleUpdateClick, handleDeleteClick }) => {
           <FiUser className="mr-2 h-4 w-4" /> {event.name}
         </p>
         <p className="text-gray-700 text-sm mb-1 flex items-center">
-          <FiCalendar className="mr-2 h-4 w-4" /> {formatDate(event.dateTime)}
+          <FiCalendar className="mr-2 h-4 w-4" /> {event.dateTime}
         </p>
         <p className="text-gray-700 text-sm mb-1 flex items-center">
-          <FiClock className="mr-2 h-4 w-4" /> {formatTime(event.dateTime)}
+          <FiClock className="mr-2 h-4 w-4" /> {event.dateTime}
         </p>
         <p className="text-gray-700 text-sm mb-2 flex items-center">
           <FiMapPin className="mr-2 h-4 w-4" /> {event.location}
