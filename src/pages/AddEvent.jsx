@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { toast, Toaster } from "sonner";
 import {
   FiCalendar,
   FiClock,
@@ -7,23 +8,27 @@ import {
   FiUser,
   FiFileText,
 } from "react-icons/fi";
+import { useAddEventMutation } from "../redux/features/event/event.api";
+import { useSelector } from "react-redux";
 
 const inputBase =
   "block w-full pl-10 pr-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm";
 const iconStyle = "h-5 w-5 text-gray-400";
 
 const AddEvent = () => {
+  const userInfo = useSelector((state) => state.auth.user);
+
   const [eventTitle, setEventTitle] = useState("");
-  const [name, setName] = useState("");
+  const [name, setName] = useState(userInfo?.name);
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
   const [location, setLocation] = useState("");
   const [description, setDescription] = useState("");
-  const [attendeeCount, setAttendeeCount] = useState(0);
-
   const [error, setError] = useState("");
 
-  const handleSubmit = (e) => {
+  const [addNewEvent] = useAddEventMutation();
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
 
@@ -31,34 +36,43 @@ const AddEvent = () => {
       setError("Please fill in all required fields.");
       return;
     }
-    if (attendeeCount < 0) {
-      setError("Attendee count cannot be negative.");
-      return;
-    }
 
     const eventDateTime = `${date}T${time}`;
-
     const newEvent = {
       eventTitle,
       name,
       dateTime: eventDateTime,
       location,
       description,
-      attendeeCount: Number(attendeeCount),
+      attendeeCount: 0,
     };
 
     console.log("New event details:", newEvent);
-    console.log(
-      "Event creation simulated. Check console for details. Replace with actual API call."
-    );
+    const toastId = toast.loading("added new event...");
 
+    try {
+      const response = await addNewEvent(newEvent);
+      console.log(response);
+
+      if (response.data) {
+        toast.success("New Event Added Successfully", { id: toastId });
+      } else {
+        toast.error("Something went wrong while adding the event", {
+          id: toastId,
+        });
+      }
+    } catch (error) {
+      const errorMessage = error?.message || "An unexpected error occurred";
+      toast.error(errorMessage, { id: toastId });
+    }
+
+    // Reset form
     setEventTitle("");
     setName("");
     setDate("");
     setTime("");
     setLocation("");
     setDescription("");
-    setAttendeeCount(0);
   };
 
   return (
@@ -68,7 +82,9 @@ const AddEvent = () => {
           <div className="mx-auto h-12 w-12 flex items-center justify-center bg-blue-100 text-blue-600 rounded-full mb-4">
             <FiCalendar className="h-7 w-7" />
           </div>
-          <h2 className="text-3xl font-extrabold text-gray-900">Add New Event</h2>
+          <h2 className="text-3xl font-extrabold text-gray-900">
+            Add New Event
+          </h2>
           <p className="mt-2 text-sm text-gray-600">
             Fill in the details below to create your event.
           </p>
@@ -101,8 +117,7 @@ const AddEvent = () => {
               type="text"
               placeholder="Your Name (Who posted this event)"
               value={name}
-              onChange={(e) => setName(e.target.value)}
-              className={inputBase}
+              className={`cursor-not-allowed ${inputBase}`}
               required
             />
           </div>
@@ -122,6 +137,7 @@ const AddEvent = () => {
                 required
               />
             </div>
+
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <FiClock className={iconStyle} />
@@ -182,12 +198,13 @@ const AddEvent = () => {
 
           <button
             type="submit"
-            className="w-full py-3 px-4 bg-blue-600 text-white text-lg font-semibold rounded-lg hover:bg-blue-700"
+            className="w-full py-3 px-4 bg-blue-600 text-white text-lg font-semibold rounded-lg hover:bg-blue-700 cursor-pointer"
           >
             Add Event
           </button>
         </form>
       </div>
+      <Toaster />
     </div>
   );
 };
