@@ -1,5 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { FiCalendar, FiClock, FiMapPin, FiUser, FiUsers, FiEdit, FiTrash2 } from "react-icons/fi";
+import {
+  FiCalendar,
+  FiClock,
+  FiMapPin,
+  FiUser,
+  FiUsers,
+  FiEdit,
+  FiTrash2,
+} from "react-icons/fi";
 import { toast } from "sonner";
 import { useUpdateEventMutation } from "../../redux/features/event/event.api";
 
@@ -71,10 +79,13 @@ const EventCard = ({ event, handleDeleteClick }) => {
         payload,
       }).unwrap(); // Use .unwrap() for better RTK Query error handling
 
-      toast.success(response?.message || "Event updated successfully!", { id: toastId });
+      toast.success(response?.message || "Event updated successfully!", {
+        id: toastId,
+      });
       closeUpdateModal();
     } catch (error) {
-      const errorMessage = error?.data?.message || error?.message || "Failed to update event.";
+      const errorMessage =
+        error?.data?.message || error?.message || "Failed to update event.";
       toast.error(errorMessage, { id: toastId });
     }
   };
@@ -101,7 +112,8 @@ const EventCard = ({ event, handleDeleteClick }) => {
           {event?.description}
         </p>
         <p className="text-base-content text-sm flex items-center">
-          <FiUsers className="mr-2 h-4 w-4" /> Attendees: {event?.attendeeCount?.length}
+          <FiUsers className="mr-2 h-4 w-4" /> Attendees:{" "}
+          {event?.attendeeCount?.length}
         </p>
 
         <div className="card-actions justify-end mt-4">
@@ -130,11 +142,15 @@ const EventCard = ({ event, handleDeleteClick }) => {
       />
       <div className="modal" role="dialog">
         <div className="modal-box">
-          <h3 className="font-bold text-lg text-base-content">Update Event: {event?.eventTitle}</h3>
+          <h3 className="font-bold text-lg text-base-content">
+            Update Event: {event?.eventTitle}
+          </h3>
           <form onSubmit={handleFormSubmit} className="py-4 space-y-4">
             <div>
               <label className="label">
-                <span className="label-text text-base-content/80">Event Title</span>
+                <span className="label-text text-base-content/80">
+                  Event Title
+                </span>
               </label>
               <input
                 type="text"
@@ -148,7 +164,9 @@ const EventCard = ({ event, handleDeleteClick }) => {
             </div>
             <div>
               <label className="label">
-                <span className="label-text text-base-content/80">Description</span>
+                <span className="label-text text-base-content/80">
+                  Description
+                </span>
               </label>
               <textarea
                 name="description"
@@ -161,7 +179,9 @@ const EventCard = ({ event, handleDeleteClick }) => {
             </div>
             <div>
               <label className="label">
-                <span className="label-text text-base-content/80">Location</span>
+                <span className="label-text text-base-content/80">
+                  Location
+                </span>
               </label>
               <input
                 type="text"

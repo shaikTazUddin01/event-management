@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
-import { FiSearch, FiSliders, FiInfo } from "react-icons/fi";
+import { FiSearch, FiSliders, FiInfo, FiCalendar } from "react-icons/fi";
 import EventCard from "../component/events/event_card";
 import { useGetAllEventQuery } from "../redux/features/event/event.api";
 
 const Events = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterOption, setFilterOption] = useState("all");
+  const [selectedFrontendDate, setSelectedFrontendDate] = useState("");
   const [queryArgs, setQueryArgs] = useState({});
 
   useEffect(() => {
@@ -14,17 +15,23 @@ const Events = () => {
       newArgs.search_title = searchTerm;
     }
     if (filterOption !== "all") {
-      newArgs.date = filterOption;
+      newArgs.filter_date = filterOption;
     }
     setQueryArgs(newArgs);
   }, [searchTerm, filterOption]);
 
   const { data, isLoading } = useGetAllEventQuery(queryArgs);
-  const events = data?.result;
+  const allEvents = data?.result;
+
+  const eventsToDisplay = allEvents?.filter((event) => {
+    if (!selectedFrontendDate) return true;
+    return event.date === selectedFrontendDate;
+  });
 
   const handleClearFilters = () => {
     setSearchTerm("");
     setFilterOption("all");
+    setSelectedFrontendDate("");
   };
 
   return (
@@ -39,9 +46,7 @@ const Events = () => {
           </p>
         </div>
 
-        {/* Search and Filter Section */}
         <div className="bg-base-100 p-6 rounded-xl shadow-lg flex flex-col md:flex-row gap-4 items-center">
-          {/* Search Input */}
           <div className="form-control flex-grow w-full md:w-auto">
             <div className="relative">
               <input
@@ -55,27 +60,44 @@ const Events = () => {
             </div>
           </div>
 
-          {/* Filter by date */}
-          <div className="form-control w-full md:w-1/3">
+          <div className="form-control w-full md:w-1/4">
+            <div className="relative">
+              <input
+                type="date"
+                placeholder="Filter by specific date"
+                className="input input-bordered w-full pl-10 pr-3 py-3 text-base-content placeholder:text-base-content/60 focus:outline-none focus:ring-primary focus:border-primary text-sm peer"
+                value={selectedFrontendDate}
+                onChange={(e) => {
+                  setSelectedFrontendDate(e.target.value);
+                  setFilterOption("all");
+                }}
+              />
+              <FiCalendar className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-base-content/60 peer-focus:text-base-content transition-colors duration-200 pointer-events-none z-20" />
+            </div>
+          </div>
+
+          <div className="form-control w-full md:w-1/4">
             <div className="relative">
               <select
                 className="select select-bordered w-full pl-10 pr-3 text-base-content focus:outline-none focus:ring-primary focus:border-primary text-sm peer"
                 value={filterOption}
-                onChange={(e) => setFilterOption(e.target.value)}
+                onChange={(e) => {
+                  setFilterOption(e.target.value);
+                  setSelectedFrontendDate("");
+                }}
               >
-                <option value="all">All Dates</option>
+                <option value="all">All Dates (Predefined)</option>
                 <option value="today">Today</option>
                 <option value="currentWeek">Current Week</option>
                 <option value="lastWeek">Last Week</option>
                 <option value="currentMonth">Current Month</option>
                 <option value="lastMonth">Last Month</option>
               </select>
-              <FiSliders className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-base-content/60  transition-colors duration-200 pointer-events-none z-20" />
+              <FiSliders className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-base-content/60 transition-colors duration-200 pointer-events-none z-20" />
             </div>
           </div>
 
-          {/* Clear filter */}
-          {(searchTerm || filterOption !== "all") && (
+          {(searchTerm || filterOption !== "all" || selectedFrontendDate) && (
             <div className="w-full md:w-auto ">
               <button
                 onClick={handleClearFilters}
@@ -92,9 +114,9 @@ const Events = () => {
           <p className="text-lg text-center text-base-content">
             Loading events...
           </p>
-        ) : events?.length === 0 ? (
+        ) : eventsToDisplay?.length === 0 ? (
           <div className="text-center py-10 text-base-content/70">
-            <FiInfo className="mx-auto h-12 w-12 text-[base-content/50] mb-4" />
+            <FiInfo className="mx-auto h-12 w-12 text-base-content/50 mb-4" />
             <p className="text-xl font-semibold">
               No events found matching your criteria.
             </p>
@@ -102,7 +124,7 @@ const Events = () => {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {events?.map((event) => (
+            {eventsToDisplay?.map((event) => (
               <EventCard key={event._id} event={event} />
             ))}
           </div>
