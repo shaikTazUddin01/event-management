@@ -1,5 +1,8 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { FiMail, FiLock, FiLogIn, FiArrowLeft } from "react-icons/fi";
+import { useUserLoginMutation } from "../redux/features/auth/user.api";
+import { toast, Toaster } from "sonner";
 
 const inputBase =
   "block w-full pl-10 pr-3 py-3 border placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm";
@@ -9,8 +12,10 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [userLogin] = useUserLoginMutation();
+  const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
 
@@ -23,8 +28,27 @@ const Login = () => {
       setError("Please enter a valid email address.");
       return;
     }
+    const userData = {
+      email,
+      password,
+    };
+    const toastId = toast.loading("login in progress...");
+    try {
+      const response = await userLogin(userData);
 
-    console.log("Login attempt simulated with:", { email, password });
+      if (response) {
+        localStorage.setItem("authUser", JSON.stringify(response.data));
+        navigate("/");
+        toast.success("login successful", {
+          id: toastId,
+        });
+      }
+    } catch (error) {
+      toast.error(error, {
+        id: toastId,
+      });
+      toastId();
+    }
   };
 
   return (
@@ -109,6 +133,7 @@ const Login = () => {
           </button>
         </form>
       </div>
+      <Toaster />
     </div>
   );
 };

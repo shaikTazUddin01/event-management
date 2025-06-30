@@ -3,6 +3,7 @@ import { FaImage } from "react-icons/fa6";
 import { FiUser, FiMail, FiLock, FiArrowLeft } from "react-icons/fi";
 import { useUserRegistrationMutation } from "../redux/features/auth/user.api";
 import { toast, Toaster } from "sonner";
+import { Navigate, useNavigate } from "react-router-dom";
 
 const inputBase =
   "block w-full pl-10 pr-3 py-3 border placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm";
@@ -14,6 +15,7 @@ const Registration = () => {
   const [password, setPassword] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   const [userRegistration] = useUserRegistrationMutation();
 
@@ -44,7 +46,13 @@ const Registration = () => {
         return;
       }
 
-      toast.success("Registration Successful", { id: toastId, duration: 500 });
+      if (response) {
+        toast.success("Registration Successful", {
+          id: toastId,
+          duration: 500,
+        });
+        navigate("/login");
+      }
     } catch (err) {
       toast.error(err, { id: toastId });
     }
