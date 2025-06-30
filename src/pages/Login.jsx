@@ -1,8 +1,11 @@
 import { useState } from "react";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { toast, Toaster } from "sonner";
 import { FiMail, FiLock, FiLogIn, FiArrowLeft } from "react-icons/fi";
 import { useUserLoginMutation } from "../redux/features/auth/user.api";
-import { toast, Toaster } from "sonner";
+import { authDecode } from "../utils/authDecode";
+import { authInfo } from "../redux/features/auth/auth.slice";
 
 const inputBase =
   "block w-full pl-10 pr-3 py-3 border placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm";
@@ -14,6 +17,7 @@ const Login = () => {
   const [error, setError] = useState("");
   const [userLogin] = useUserLoginMutation();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -37,7 +41,10 @@ const Login = () => {
       const response = await userLogin(userData);
 
       if (response) {
-        localStorage.setItem("authUser", JSON.stringify(response.data));
+        console.log(response);
+        const userInfo = authDecode(response.data.token);
+        dispatch(authInfo({ data: userInfo, token: response.data.token }));
+
         navigate("/");
         toast.success("login successful", {
           id: toastId,

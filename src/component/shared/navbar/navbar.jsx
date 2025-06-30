@@ -1,11 +1,12 @@
-import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { logout } from "../../../redux/features/auth/auth.slice";
 
 const Navbar = () => {
-  const [user, setUser] = useState({
-    name: "Taz Uddin",
-    photoURL: "",
-    isLoggedIn: false,
-  });
+  const navigate = useNavigate();
+  const userInFo = useSelector((state) => state.auth);
+  console.log(userInFo);
+  const dispatch = useDispatch();
 
   const navItem = [
     {
@@ -25,6 +26,11 @@ const Navbar = () => {
       link: "/add-event",
     },
   ];
+
+  const handleLogOut = () => {
+    dispatch(logout());
+    navigate("/");
+  };
 
   return (
     <div className="bg-black">
@@ -79,7 +85,7 @@ const Navbar = () => {
         </div>
 
         <div className="navbar-end">
-          {!user.isLoggedIn ? (
+          {!userInFo?.token ? (
             <a
               href="/login"
               className="btn btn-outline btn-sm text-white border-white hover:bg-[#131313] hover:text-white text-[16px]"
@@ -90,15 +96,15 @@ const Navbar = () => {
             <div className="dropdown dropdown-end">
               <div tabIndex={0} className="btn btn-ghost btn-circle avatar">
                 <div className="w-10 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
-                  <img src={user.photoURL} alt="profile" />
+                  <img src={userInFo?.imageUrl} alt="profile" />
                 </div>
               </div>
               <ul
                 tabIndex={0}
                 className="mt-3 z-[1] p-2 shadow menu menu-sm dropdown-content bg-white text-black rounded-box w-52"
               >
-                <li className="px-4 py-2 font-semibold">{user.name}</li>
-                <li>
+                <li className="px-4 py-2 font-semibold">{userInFo?.name}</li>
+                <li onClick={handleLogOut}>
                   <a>Logout</a>
                 </li>
               </ul>
