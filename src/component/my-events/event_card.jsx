@@ -1,13 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  FiCalendar,
-  FiClock,
-  FiMapPin,
-  FiUser,
-  FiUsers,
-  FiEdit,
-  FiTrash2,
-} from "react-icons/fi";
+import { FiCalendar, FiClock, FiMapPin, FiUser, FiUsers, FiEdit, FiTrash2 } from "react-icons/fi";
 import { toast } from "sonner";
 import { useUpdateEventMutation } from "../../redux/features/event/event.api";
 
@@ -25,7 +17,6 @@ const EventCard = ({ event, handleDeleteClick }) => {
 
   useEffect(() => {
     if (event) {
-     
       setFormData({
         eventTitle: event.eventTitle || "",
         description: event.description || "",
@@ -54,7 +45,7 @@ const EventCard = ({ event, handleDeleteClick }) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: name === "attendeeCount" ? Number(value) : value,
+      [name]: value,
     }));
   };
 
@@ -78,63 +69,55 @@ const EventCard = ({ event, handleDeleteClick }) => {
       const response = await updateEvent({
         id: event._id,
         payload,
-      });
+      }).unwrap(); // Use .unwrap() for better RTK Query error handling
 
-      if (response?.message) {
-        toast.success(response.message, { id: toastId });
-      } else {
-        toast.success("Event updated successfully!", { id: toastId });
-      }
+      toast.success(response?.message || "Event updated successfully!", { id: toastId });
       closeUpdateModal();
     } catch (error) {
-      const errorMessage =
-        error?.data?.message || error?.message || "Failed to update event.";
+      const errorMessage = error?.data?.message || error?.message || "Failed to update event.";
       toast.error(errorMessage, { id: toastId });
     }
   };
 
   return (
-    <div
-      key={event?._id}
-      className="bg-white p-6 rounded-xl shadow-lg border border-gray-200 flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-4 sm:space-y-0"
-    >
-      <div className="flex-1 text-left">
-        <h3 className="text-xl font-bold text-gray-900 mb-2">
+    <div className="card card-compact bg-base-100 shadow-xl border border-base-300">
+      <div className="card-body">
+        <h3 className="card-title text-base-content text-2xl mb-2">
           {event?.eventTitle}
         </h3>
-        <p className="text-blue-600 text-sm font-semibold mb-1 flex items-center">
+        <p className="text-primary text-sm font-semibold mb-1 flex items-center">
           <FiUser className="mr-2 h-4 w-4" /> {event?.name}
         </p>
-        <p className="text-gray-700 text-sm mb-1 flex items-center">
+        <p className="text-base-content text-sm mb-1 flex items-center">
           <FiCalendar className="mr-2 h-4 w-4" /> {event?.date}
         </p>
-        <p className="text-gray-700 text-sm mb-1 flex items-center">
+        <p className="text-base-content text-sm mb-1 flex items-center">
           <FiClock className="mr-2 h-4 w-4" /> {event?.time}
         </p>
-        <p className="text-gray-700 text-sm mb-2 flex items-center">
+        <p className="text-base-content text-sm mb-2 flex items-center">
           <FiMapPin className="mr-2 h-4 w-4" /> {event?.location}
         </p>
-        <p className="text-gray-600 text-sm mb-2 line-clamp-2">
+        <p className="text-base-content/80 text-sm mb-2 line-clamp-2">
           {event?.description}
         </p>
-        <p className="text-gray-700 text-sm flex items-center">
-          <FiUsers className="mr-2 h-4 w-4" /> Attendees: {event?.attendeeCount}
+        <p className="text-base-content text-sm flex items-center">
+          <FiUsers className="mr-2 h-4 w-4" /> Attendees: {event?.attendeeCount?.length}
         </p>
-      </div>
 
-      <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 mt-4 sm:mt-0">
-        <button
-          onClick={openUpdateModal}
-          className="flex items-center justify-center px-4 py-2 bg-green-500 text-white rounded-lg shadow-md hover:bg-green-600 transition-colors duration-200 text-sm font-medium cursor-pointer"
-        >
-          <FiEdit className="mr-2 h-4 w-4" /> Update
-        </button>
-        <button
-          onClick={() => handleDeleteClick(event?._id)}
-          className="flex items-center justify-center px-4 py-2 bg-red-500 text-white rounded-lg shadow-md hover:bg-red-600 transition-colors duration-200 text-sm font-medium cursor-pointer"
-        >
-          <FiTrash2 className="mr-2 h-4 w-4" /> Delete
-        </button>
+        <div className="card-actions justify-end mt-4">
+          <button
+            onClick={openUpdateModal}
+            className="btn btn-sm btn-success text-success-content"
+          >
+            <FiEdit className="h-4 w-4" /> Update
+          </button>
+          <button
+            onClick={() => handleDeleteClick(event?._id)}
+            className="btn btn-sm btn-error text-error-content"
+          >
+            <FiTrash2 className="h-4 w-4" /> Delete
+          </button>
+        </div>
       </div>
 
       {/* modal */}
@@ -147,11 +130,11 @@ const EventCard = ({ event, handleDeleteClick }) => {
       />
       <div className="modal" role="dialog">
         <div className="modal-box">
-          <h3 className="font-bold text-lg">Update Event: {event?.eventTitle}</h3>
+          <h3 className="font-bold text-lg text-base-content">Update Event: {event?.eventTitle}</h3>
           <form onSubmit={handleFormSubmit} className="py-4 space-y-4">
             <div>
               <label className="label">
-                <span className="label-text">Event Title</span>
+                <span className="label-text text-base-content/80">Event Title</span>
               </label>
               <input
                 type="text"
@@ -159,26 +142,26 @@ const EventCard = ({ event, handleDeleteClick }) => {
                 value={formData.eventTitle}
                 onChange={handleFormChange}
                 placeholder="Event Title"
-                className="input input-bordered w-full"
+                className="input input-bordered w-full text-base-content"
                 required
               />
             </div>
             <div>
               <label className="label">
-                <span className="label-text">Description</span>
+                <span className="label-text text-base-content/80">Description</span>
               </label>
               <textarea
                 name="description"
                 value={formData.description}
                 onChange={handleFormChange}
                 placeholder="Event Description"
-                className="textarea textarea-bordered w-full"
+                className="textarea textarea-bordered w-full text-base-content"
                 required
               ></textarea>
             </div>
             <div>
               <label className="label">
-                <span className="label-text">Location</span>
+                <span className="label-text text-base-content/80">Location</span>
               </label>
               <input
                 type="text"
@@ -186,34 +169,34 @@ const EventCard = ({ event, handleDeleteClick }) => {
                 value={formData.location}
                 onChange={handleFormChange}
                 placeholder="Event Location"
-                className="input input-bordered w-full"
+                className="input input-bordered w-full text-base-content"
                 required
               />
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="label">
-                  <span className="label-text">Date</span>
+                  <span className="label-text text-base-content/80">Date</span>
                 </label>
                 <input
                   type="date"
                   name="date"
                   value={formData.date}
                   onChange={handleFormChange}
-                  className="input input-bordered w-full"
+                  className="input input-bordered w-full text-base-content"
                   required
                 />
               </div>
               <div>
                 <label className="label">
-                  <span className="label-text">Time</span>
+                  <span className="label-text text-base-content/80">Time</span>
                 </label>
                 <input
                   type="time"
                   name="time"
                   value={formData.time}
                   onChange={handleFormChange}
-                  className="input input-bordered w-full"
+                  className="input input-bordered w-full text-base-content"
                   required
                 />
               </div>
@@ -229,7 +212,7 @@ const EventCard = ({ event, handleDeleteClick }) => {
               </button>
               <button
                 type="button"
-                className="btn"
+                className="btn btn-ghost"
                 onClick={closeUpdateModal}
                 disabled={isUpdating}
               >

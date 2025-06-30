@@ -69,7 +69,7 @@ const Navbar = () => {
             </ul>
           </div>
 
-          <a href="/" className="text-xl font-bold  text-white">
+          <a href="/" className="text-[23px] font-bold  text-white">
             Event<span className="text-primary">Manager</span>
           </a>
         </div>
