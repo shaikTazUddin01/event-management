@@ -40,6 +40,8 @@ const AddEvent = () => {
     const newEvent = {
       eventTitle,
       name,
+      email: userInfo?.email,
+      dateTime: new Date(`${date}T${time}`),
       date,
       time,
       location,
@@ -47,7 +49,7 @@ const AddEvent = () => {
       attendeeCount: 0,
     };
 
-    console.log("New event details:", newEvent);
+
     const toastId = toast.loading("added new event...");
 
     try {
@@ -67,12 +69,11 @@ const AddEvent = () => {
     }
 
     // Reset form
-    setEventTitle("");
-    setName("");
-    setDate("");
-    setTime("");
-    setLocation("");
-    setDescription("");
+    // setEventTitle("");
+    // setDate("");
+    // setTime("");
+    // setLocation("");
+    // setDescription("");
   };
 
   return (

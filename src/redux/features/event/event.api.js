@@ -12,12 +12,51 @@ export const eventApi = baseApi.injectEndpoints({
     }),
 
     getAllEvent: builder.query({
-      query: () => ({
-        url: "/event/getAll",
+      query: (args) => {
+        const { search_title, date } = args || {}; // New params
+
+        console.log("__RTK Query Args__:", args);
+
+        const params = new URLSearchParams();
+        if (search_title) {
+          params.append("search_title", search_title);
+        }
+        if (date) {
+          params.append("filter_date", date);
+        }
+
+        const queryString = params.toString();
+        const url = queryString
+          ? `/event/getAll?${queryString}`
+          : "/event/getAll";
+
+        return {
+          url,
+          method: "GET",
+        };
+      },
+      providesTags: ["event"],
+    }),
+    getMyEvent: builder.query({
+      query: (email) => ({
+        url: `/event/myEvent?email=${email}`,
         method: "GET",
       }),
+      providesTags: ["event"],
+    }),
+    deleteEvent: builder.mutation({
+      query: (id) => ({
+        url: `/event/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["event"],
     }),
   }),
 });
 
-export const { useAddEventMutation, useGetAllEventQuery } = eventApi;
+export const {
+  useAddEventMutation,
+  useGetAllEventQuery,
+  useDeleteEventMutation,
+  useGetMyEventQuery,
+} = eventApi;

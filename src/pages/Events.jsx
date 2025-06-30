@@ -1,19 +1,37 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FiSearch, FiSliders, FiInfo } from "react-icons/fi";
 import EventCard from "../component/events/event_card";
 import { useGetAllEventQuery } from "../redux/features/event/event.api";
 
 const Events = () => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [filterOption, setFilterOption] = useState("");
-  const { data, isLoading } = useGetAllEventQuery();
-  const events = data?.result;
+  const [filterOption, setFilterOption] = useState("all"); // Default to 'all'
 
-  console.log(events);
+  // State to hold the parameters for the RTK Query
+  const [queryArgs, setQueryArgs] = useState({});
+
+  useEffect(() => {
+    const newArgs = {};
+
+    if (searchTerm) {
+      newArgs.search_title = searchTerm;
+    }
+
+    // Always include filterOption as 'date' unless it's 'all'
+    if (filterOption !== "all") {
+      newArgs.date = filterOption; // This will send date=today, date=currentWeek, etc.
+    }
+    setQueryArgs(newArgs);
+  }, [searchTerm, filterOption]);
+
+  // Pass queryArgs to useGetAllEventQuery
+  console.log("Frontend Query Args:", queryArgs); // For debugging
+  const { data, isLoading } = useGetAllEventQuery(queryArgs);
+  const events = data?.result;
 
   const handleClearFilters = () => {
     setSearchTerm("");
-    setFilterOption("");
+    setFilterOption("all"); // Reset to 'all'
   };
 
   return (
@@ -86,7 +104,7 @@ const Events = () => {
         </div>
 
         {isLoading ? (
-          <p className="text-lg">Loading...</p>
+          <p className="text-lg text-center">Loading events...</p>
         ) : events?.length === 0 ? (
           <div className="text-center py-10 text-gray-600">
             <FiInfo className="mx-auto h-12 w-12 text-gray-400 mb-4" />
@@ -98,7 +116,7 @@ const Events = () => {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {events?.map((event) => (
-              <EventCard event={event} />
+              <EventCard key={event._id} event={event} />
             ))}
           </div>
         )}
