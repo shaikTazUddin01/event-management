@@ -1,13 +1,15 @@
 import { Link } from "react-router-dom";
-
+import logo from "../../../assets/logo.png"
 const Footer = () => {
   return (
     <footer className="bg-black text-white py-10">
       <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-6">
         <div className="text-center md:text-left">
-          <Link to="/" className="text-[23px] font-bold">
-            <span className="text-primary ">Event</span>Manager
-          </Link>
+          
+          <a href="/" className="text-[25px] font-bold  text-white flex items-center ">
+          <img src={logo} alt=""  className="w-[30px] h-[30px]"/>
+            <span className="text-primary">Mzone</span>
+          </a>
           <p className="text-sm mt-1 text-gray-400">
             Seamless Event Planning & Management
           </p>

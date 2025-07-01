@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { logout } from "../../../redux/features/auth/auth.slice";
-
+import logo from "../../../assets/logo.png"
 const Navbar = () => {
   const navigate = useNavigate();
   const userInFo = useSelector((state) => state.auth);
@@ -69,8 +69,9 @@ const Navbar = () => {
             </ul>
           </div>
 
-          <a href="/" className="text-[23px] font-bold  text-white">
-            Event<span className="text-primary">Manager</span>
+          <a href="/" className="text-[25px] font-bold  text-white flex items-center ">
+          <img src={logo} alt=""  className="w-[30px] h-[30px]"/>
+            <span className="text-primary">Mzone</span>
           </a>
         </div>
 
@@ -90,7 +91,7 @@ const Navbar = () => {
               href="/login"
               className="btn btn-outline btn-sm text-white border-white hover:bg-[#131313] hover:text-white text-[16px]"
             >
-              Login
+              Sign In
             </a>
           ) : (
             <div className="dropdown dropdown-end">

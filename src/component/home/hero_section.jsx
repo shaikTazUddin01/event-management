@@ -18,7 +18,7 @@ const HeroSection = () => {
             Explore Events
           </a>
           <a
-            href="/create-event"
+            href="/add-event"
             className="btn btn-lg btn-outline text-primary-content border-primary-content font-semibold px-8 hover:bg-primary-content hover:text-primary shadow-md hover:shadow-lg transition-all duration-300"
           >
             Create Event

@@ -11,7 +11,7 @@ const ActionSection = () => {
         unforgettable memories.
       </p>
       <a
-        href="/signup"
+        href="/registration"
         className="btn btn-lg btn-primary text-primary-content shadow-lg hover:shadow-xl transition-all duration-300"
       >
         Get Started Now
